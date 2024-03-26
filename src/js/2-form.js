@@ -1,51 +1,51 @@
-const storageKeyEmail = "feedback-em";
-const storageKeyMessage = "feedback-mess";
+const storageKey = "feedback-form-state";
 
 const form = document.querySelector(".feedback-form");
-const emailinput = form.querySelector("[name='email']");
+const emailInput = form.querySelector("[name='email']");
 const messageInput = form.querySelector("[name='message']");
 
 form.addEventListener("submit", handleSubmit);
-emailinput.addEventListener("input", allInputs);
-messageInput.addEventListener("input", allInputs);
+emailInput.addEventListener("input", saveInput);
+messageInput.addEventListener("input", saveInput);
 
-saveInput();
+loadInput();
 
 function handleSubmit(event) {
   event.preventDefault();
 
-  const email = emailinput.value.trim(); 
-  const message = messageInput.value.trim(); 
+  const email = emailInput.value.trim();
+  const message = messageInput.value.trim();
 
   if (email === '' || message === '') {
     return alert('All form fields must be filled in');
   }
 
-  console.log("send");
+  const userData = {
+    email: email,
+    message: message
+  };
+
+  console.log(userData);
+
   event.currentTarget.reset();
-  localStorage.removeItem(storageKeyEmail);
-  localStorage.removeItem(storageKeyMessage);
-}
-
-function allInputs(event) {
-
-  const target = event.target; 
-  const message = target.value.trim();
-  
-  if (target === emailinput) {
-    localStorage.setItem(storageKeyEmail, message);
-  } else if (target === messageInput) {
-    localStorage.setItem(storageKeyMessage, message);
-  }
+  localStorage.removeItem(storageKey);
 }
 
 function saveInput() {
-  const savedEmail = localStorage.getItem(storageKeyEmail);
-  const savedMessage = localStorage.getItem(storageKeyMessage);
+  const userData = {
+    email: emailInput.value.trim(),
+    message: messageInput.value.trim()
+  };
 
-  if (savedEmail || savedMessage) {
-    emailinput.value = savedEmail;
-    messageInput.value = savedMessage;
+  localStorage.setItem(storageKey, JSON.stringify(userData));
+}
+
+function loadInput() {
+  const savedData = localStorage.getItem(storageKey);
+
+  if (savedData) {
+    const userData = JSON.parse(savedData);
+    emailInput.value = userData.email;
+    messageInput.value = userData.message;
   }
-
 }
